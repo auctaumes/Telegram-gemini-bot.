@@ -14,7 +14,7 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
 # Render Environment Variables'da GEMINI_MODEL bo'lmasa,
 # shu qiymatdan foydalanadi.
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
 TELEGRAM_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 
