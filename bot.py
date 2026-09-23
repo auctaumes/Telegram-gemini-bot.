@@ -131,6 +131,8 @@ def telegram_loop():
             print("Telegram getUpdates:", response.status_code)
 
             data = response.json()
+            
+            print("TELEGRAM DATA:", data, flush=True)
 
             if not data.get("ok"):
                 print("TELEGRAM API ERROR:", data)
