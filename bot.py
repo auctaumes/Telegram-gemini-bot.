@@ -1,6 +1,8 @@
 import os
 import time
+import threading
 import requests
+from flask import Flask
 from google import genai
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
@@ -10,11 +12,18 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 
 TELEGRAM_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 
+app = Flask(__name__)
 
-def ask_gemini(user_message):
+
+@app.route("/")
+def home():
+    return "Telegram Gemini Bot is running!"
+
+
+def ask_gemini(text):
     response = client.models.generate_content(
         model="gemini-3.8-flash",
-        contents=user_message
+        contents=text
     )
     return response.text
 
@@ -30,10 +39,10 @@ def send_message(chat_id, text):
     )
 
 
-def main():
+def telegram_loop():
     offset = 0
 
-    print("Bot ishga tushdi!")
+    print("Telegram bot started!")
 
     while True:
         try:
@@ -71,7 +80,6 @@ def main():
                     continue
 
                 answer = ask_gemini(user_text)
-
                 send_message(chat_id, answer)
 
         except Exception as e:
@@ -79,5 +87,16 @@ def main():
             time.sleep(5)
 
 
+def start_web_server():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+
 if __name__ == "__main__":
-    main()
+    web_thread = threading.Thread(
+        target=start_web_server,
+        daemon=True
+    )
+    web_thread.start()
+
+    telegram_loop()
